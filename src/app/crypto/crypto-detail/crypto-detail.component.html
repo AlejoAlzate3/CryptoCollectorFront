@@ -1,1 +1,175 @@
-<p>crypto-detail works!</p>
+<div class="crypto-detail-container">
+    <!-- Botón volver -->
+    <div class="back-button-container">
+        <button mat-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Volver al listado
+        </button>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading()) {
+    <div class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Cargando detalles de la criptomoneda...</p>
+    </div>
+    }
+
+    <!-- Error -->
+    @if (error() && !isLoading()) {
+    <mat-card class="error-card">
+        <mat-card-content>
+            <div class="error-content">
+                <mat-icon>error_outline</mat-icon>
+                <div>
+                    <h3>Error al cargar</h3>
+                    <p>{{ error() }}</p>
+                    <button mat-raised-button color="primary" (click)="goBack()">
+                        Volver al listado
+                    </button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    }
+
+    <!-- Detalle de la criptomoneda -->
+    @if (crypto() && !isLoading()) {
+    <div class="detail-content">
+        <!-- Encabezado -->
+        <mat-card class="header-card">
+            <mat-card-content>
+                <div class="crypto-header">
+                    <div class="crypto-title">
+                        <h1>{{ crypto()!.name }}</h1>
+                        <mat-chip class="symbol-chip">{{ crypto()!.symbol.toUpperCase() }}</mat-chip>
+                        @if (crypto()!.marketCapRank) {
+                        <mat-chip [style.background-color]="getRankColor(crypto()!.marketCapRank)" class="rank-chip">
+                            <mat-icon>military_tech</mat-icon>
+                            Rank #{{ crypto()!.marketCapRank }}
+                        </mat-chip>
+                        }
+                    </div>
+
+                    <div class="crypto-price">
+                        <div class="price-label">Precio Actual</div>
+                        <div class="price-value">{{ formatPrice(crypto()!.currentPrice) }}</div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Información principal -->
+        <div class="info-grid">
+            <mat-card class="info-card">
+                <mat-card-content>
+                    <div class="info-item">
+                        <div class="info-icon market-cap-icon">
+                            <mat-icon>account_balance</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Market Cap</div>
+                            <div class="info-value">{{ formatLargeNumber(crypto()!.marketCap) }}</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="info-card">
+                <mat-card-content>
+                    <div class="info-item">
+                        <div class="info-icon volume-icon">
+                            <mat-icon>show_chart</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Volumen 24h</div>
+                            <div class="info-value">{{ formatLargeNumber(crypto()!.totalVolume) }}</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="info-card">
+                <mat-card-content>
+                    <div class="info-item">
+                        <div class="info-icon id-icon">
+                            <mat-icon>fingerprint</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Coin ID</div>
+                            <div class="info-value small">{{ crypto()!.coinId }}</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="info-card">
+                <mat-card-content>
+                    <div class="info-item">
+                        <div class="info-icon update-icon">
+                            <mat-icon>schedule</mat-icon>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Última Actualización</div>
+                            <div class="info-value small">{{ formatDate(crypto()!.lastUpdated) }}</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <mat-card class="additional-info-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>info</mat-icon>
+                    Información Adicional
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="additional-info-grid">
+                    <div class="info-row">
+                        <span class="label">Nombre Completo:</span>
+                        <span class="value">{{ crypto()!.name }}</span>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div class="info-row">
+                        <span class="label">Símbolo:</span>
+                        <span class="value">{{ crypto()!.symbol.toUpperCase() }}</span>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div class="info-row">
+                        <span class="label">Ranking de Mercado:</span>
+                        <span class="value">{{ crypto()!.marketCapRank || 'N/A' }}</span>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div class="info-row">
+                        <span class="label">Precio Actual:</span>
+                        <span class="value highlight">{{ formatPrice(crypto()!.currentPrice) }}</span>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div class="info-row">
+                        <span class="label">Capitalización de Mercado:</span>
+                        <span class="value">{{ formatLargeNumber(crypto()!.marketCap) }}</span>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div class="info-row">
+                        <span class="label">Volumen de Trading (24h):</span>
+                        <span class="value">{{ formatLargeNumber(crypto()!.totalVolume) }}</span>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div class="info-row">
+                        <span class="label">Última Sincronización:</span>
+                        <span class="value">{{ formatDate(crypto()!.lastUpdated) }}</span>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    }
+</div>

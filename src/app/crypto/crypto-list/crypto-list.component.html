@@ -1,1 +1,181 @@
-<p>crypto-list works!</p>
+<div class="crypto-list-container">
+    <!-- Encabezado con estadísticas -->
+    <div class="header">
+        <div class="header-content">
+            <h1>
+                <mat-icon>currency_bitcoin</mat-icon>
+                Criptomonedas
+            </h1>
+
+            @if (stats()) {
+            <div class="stats-chips">
+                <mat-chip class="stat-chip">
+                    <mat-icon>bar_chart</mat-icon>
+                    <span><strong>Total:</strong> {{ stats()!.total }} cryptos</span>
+                </mat-chip>
+
+                @if (stats()!.lastUpdated) {
+                <mat-chip class="stat-chip">
+                    <mat-icon>schedule</mat-icon>
+                    <span><strong>Última actualización:</strong> {{ formatDate(stats()!.lastUpdated) }}</span>
+                </mat-chip>
+                }
+            </div>
+            }
+        </div>
+
+        <button mat-raised-button color="primary" (click)="syncCryptos()" [disabled]="isSyncing()"
+            [attr.aria-label]="isSyncing() ? 'Sincronizando criptomonedas desde CoinGecko' : 'Sincronizar criptomonedas desde CoinGecko'"
+            [attr.aria-busy]="isSyncing()">
+            <mat-icon>{{ isSyncing() ? 'hourglass_empty' : 'sync' }}</mat-icon>
+            {{ isSyncing() ? 'Sincronizando...' : 'Sincronizar' }}
+        </button>
+    </div>
+
+    <!-- Búsqueda -->
+    <mat-card class="search-card">
+        <mat-card-content>
+            <div class="search-container">
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>Buscar por nombre o símbolo</mat-label>
+                    <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" (input)="onSearchInputChange()"
+                        placeholder="Ej: Bitcoin, BTC, ethereum..." aria-label="Campo de búsqueda de criptomonedas"
+                        role="searchbox">
+                    <mat-icon matPrefix>search</mat-icon>
+                    @if (searchQuery()) {
+                    <button matSuffix mat-icon-button (click)="onClearSearch()" matTooltip="Limpiar búsqueda"
+                        aria-label="Limpiar búsqueda">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    }
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" (click)="onSearch()" [disabled]="isLoading()"
+                    aria-label="Buscar criptomonedas">
+                    Buscar
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Mensaje de error -->
+    @if (error()) {
+    <mat-card class="error-card">
+        <mat-card-content>
+            <div class="error-content">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ error() }}</span>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    }
+
+    <!-- Tabla de criptomonedas -->
+    <mat-card class="table-card">
+        <mat-card-content>
+            @if (isLoading()) {
+            <div class="loading-container">
+                <mat-spinner></mat-spinner>
+                <p>Cargando criptomonedas...</p>
+            </div>
+            } @else {
+            <div class="table-container">
+                <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortChange($event)"
+                    [matSortActive]="sortBy" [matSortDirection]="sortDirection" matSortDisableClear class="crypto-table"
+                    role="table" aria-label="Tabla de criptomonedas" aria-describedby="crypto-table-description">
+                    <caption id="crypto-table-description" class="sr-only">
+                        Lista de criptomonedas con información de precio, capitalización de mercado y volumen
+                    </caption>
+
+                    <ng-container matColumnDef="marketCapRank">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="rank-column">#</th>
+                        <td mat-cell *matCellDef="let crypto" class="rank-column">
+                            <span class="rank-badge">{{ crypto.marketCapRank || '-' }}</span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                        <td mat-cell *matCellDef="let crypto" class="name-cell">
+                            <div class="crypto-name">
+                                <span class="name">{{ crypto.name }}</span>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="symbol">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Símbolo</th>
+                        <td mat-cell *matCellDef="let crypto">
+                            <span class="symbol-badge">{{ crypto.symbol.toUpperCase() }}</span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="currentPrice">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="number-column">Precio</th>
+                        <td mat-cell *matCellDef="let crypto" class="number-column">
+                            <span class="price">{{ formatPrice(crypto.currentPrice) }}</span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="marketCap">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="number-column">
+                            Market Cap
+                        </th>
+                        <td mat-cell *matCellDef="let crypto" class="number-column">
+                            {{ formatLargeNumber(crypto.marketCap) }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="totalVolume">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="number-column">
+                            Volumen 24h
+                        </th>
+                        <td mat-cell *matCellDef="let crypto" class="number-column">
+                            {{ formatLargeNumber(crypto.totalVolume) }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="lastUpdated">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Actualizado</th>
+                        <td mat-cell *matCellDef="let crypto" class="date-column">
+                            {{ formatDate(crypto.lastUpdated) }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef class="actions-column">Acciones</th>
+                        <td mat-cell *matCellDef="let crypto" class="actions-column">
+                            <button mat-icon-button color="primary" (click)="viewDetail(crypto)"
+                                matTooltip="Ver detalle" [attr.aria-label]="'Ver detalles de ' + crypto.name">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns" role="row"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackByCoinId"
+                        class="crypto-row" role="row"></tr>
+
+                    <tr class="mat-row no-data-row" *matNoDataRow>
+                        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                            <div class="no-data">
+                                <mat-icon>search_off</mat-icon>
+                                <p>No se encontraron criptomonedas</p>
+                                @if (searchQuery()) {
+                                <button mat-button color="primary" (click)="onClearSearch()">
+                                    Limpiar búsqueda
+                                </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                [pageIndex]="pageIndex" (page)="onPageChange($event)" showFirstLastButtons>
+            </mat-paginator>
+            }
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,286 @@
+.crypto-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.back-button-container {
+    margin-bottom: 24px;
+
+    button {
+        mat-icon {
+            margin-right: 4px;
+        }
+    }
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px;
+    gap: 16px;
+
+    p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+}
+
+.error-card {
+    background-color: #ffebee;
+
+    .error-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            color: #c62828;
+        }
+
+        h3 {
+            margin: 0 0 8px 0;
+            color: #c62828;
+        }
+
+        p {
+            margin: 0 0 16px 0;
+            color: #666;
+        }
+    }
+}
+
+.detail-content {
+    .header-card {
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+
+        .crypto-header {
+            .crypto-title {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 24px;
+
+                h1 {
+                    margin: 0;
+                    font-size: 36px;
+                    font-weight: 700;
+                }
+
+                .symbol-chip {
+                    background-color: rgba(255, 255, 255, 0.2);
+                    color: white;
+                    font-weight: 600;
+                    font-size: 14px;
+                    padding: 8px 16px;
+                    backdrop-filter: blur(10px);
+                }
+
+                .rank-chip {
+                    color: white;
+                    font-weight: 600;
+                    font-size: 14px;
+                    padding: 8px 16px;
+                    backdrop-filter: blur(10px);
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+
+                    mat-icon {
+                        font-size: 18px;
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+
+            .crypto-price {
+                .price-label {
+                    font-size: 14px;
+                    opacity: 0.9;
+                    margin-bottom: 8px;
+                }
+
+                .price-value {
+                    font-size: 48px;
+                    font-weight: 700;
+                    font-variant-numeric: tabular-nums;
+                }
+            }
+        }
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+
+        .info-card {
+            .info-item {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+
+                .info-icon {
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    mat-icon {
+                        font-size: 28px;
+                        width: 28px;
+                        height: 28px;
+                        color: white;
+                    }
+
+                    &.market-cap-icon {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    }
+
+                    &.volume-icon {
+                        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    }
+
+                    &.id-icon {
+                        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                    }
+
+                    &.update-icon {
+                        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                    }
+                }
+
+                .info-content {
+                    flex: 1;
+                    min-width: 0;
+
+                    .info-label {
+                        font-size: 12px;
+                        color: #999;
+                        margin-bottom: 4px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+
+                    .info-value {
+                        font-size: 20px;
+                        font-weight: 600;
+                        color: #212121;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+
+                        &.small {
+                            font-size: 14px;
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .additional-info-card {
+        mat-card-header {
+            mat-card-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 20px;
+
+                mat-icon {
+                    color: #1976d2;
+                }
+            }
+        }
+
+        .additional-info-grid {
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 0;
+                gap: 16px;
+
+                .label {
+                    font-weight: 500;
+                    color: #666;
+                    flex: 0 0 auto;
+                }
+
+                .value {
+                    font-weight: 500;
+                    color: #212121;
+                    text-align: right;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    &.highlight {
+                        color: #2e7d32;
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            mat-divider {
+                margin: 0;
+            }
+        }
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .crypto-detail-container {
+        padding: 16px;
+    }
+
+    .detail-content {
+        .header-card {
+            .crypto-header {
+                .crypto-title {
+                    h1 {
+                        font-size: 28px;
+                    }
+                }
+
+                .crypto-price {
+                    .price-value {
+                        font-size: 36px;
+                    }
+                }
+            }
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .additional-info-card {
+            .additional-info-grid {
+                .info-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+
+                    .value {
+                        text-align: left;
+                    }
+                }
+            }
+        }
+    }
+}

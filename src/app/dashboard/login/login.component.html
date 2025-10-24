@@ -1,12 +1,12 @@
 <main>
     <div class="login-container">
         <h3 class="title-login">Iniciar Sesión</h3>
-        
+
         @if (loginError()) {
-            <div class="error-alert" role="alert">
-                <mat-icon>error_outline</mat-icon>
-                <span>{{ loginError() }}</span>
-            </div>
+        <div class="error-alert" role="alert">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ loginError() }}</span>
+        </div>
         }
 
         <form [formGroup]="loginForm" (ngSubmit)="login()">
@@ -31,13 +31,11 @@
                 }
             </mat-form-field>
 
-            <button mat-raised-button type="submit" class="btn-login" 
-                    [disabled]="loginForm.invalid || isLoading()">
+            <button mat-raised-button type="submit" class="btn-login" [disabled]="loginForm.invalid || isLoading()">
                 {{ isLoading() ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
             </button>
 
-            <button mat-button type="button" class="btn-register" (click)="register()" 
-                    [disabled]="isLoading()">
+            <button mat-button type="button" class="btn-register" (click)="register()" [disabled]="isLoading()">
                 Registrarse
             </button>
         </form>

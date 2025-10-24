@@ -1,10 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from "@angular/material/card";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { merge, startWith } from 'rxjs';
+import { merge, startWith, Subject, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,10 +16,12 @@ import { RegisterRequest } from '../../core/models/auth.models';
   selector: 'app-signup',
   standalone: true,
   imports: [CommonModule, MatCardModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
-export class SignupComponent {
+export class SignupComponent implements OnDestroy {
+  private readonly destroy$ = new Subject<void>();
 
   readonly email = new FormControl('', [Validators.required, Validators.email]);
   readonly password = new FormControl('', [Validators.required, Validators.minLength(6)]);
@@ -37,7 +39,7 @@ export class SignupComponent {
   readonly signupForm;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private router: Router,
     private authService: AuthService
   ) {
@@ -123,23 +125,22 @@ export class SignupComponent {
         password: this.password.value!
       };
 
-      this.authService.register(registerRequest).subscribe({
-        next: (response) => {
-          console.log('Registro exitoso:', response);
-          this.isLoading.set(false);
-          this.registerSuccess.set('¡Registro exitoso! Redirigiendo al login...');
-          
-          // Redirigir al login después de 2 segundos
-          setTimeout(() => {
-            this.router.navigate(['/dashboard/login']);
-          }, 2000);
-        },
-        error: (error) => {
-          console.error('Error en registro:', error);
-          this.registerError.set(error.message || 'Error al registrarse');
-          this.isLoading.set(false);
-        }
-      });
+      this.authService.register(registerRequest)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            this.isLoading.set(false);
+            this.registerSuccess.set('¡Registro exitoso! Redirigiendo al login...');
+
+            setTimeout(() => {
+              this.router.navigate(['/dashboard/login']);
+            }, 2000);
+          },
+          error: (error) => {
+            this.registerError.set(error.message || 'Error al registrarse');
+            this.isLoading.set(false);
+          }
+        });
     } else {
       this.signupForm.markAllAsTouched();
     }
@@ -147,5 +148,10 @@ export class SignupComponent {
 
   goToLogin(): void {
     this.router.navigate(['/dashboard/login']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
