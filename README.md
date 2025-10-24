@@ -253,7 +253,7 @@ export const environment = {
 #### Con Bun (Recomendado) ⚡
 
 ```bash
-# Servidor de desarrollo (http://localhost:4200)
+# Servidor de desarrollo (http://localhost:4201)
 bun start
 # o
 bun run ng serve
@@ -268,7 +268,7 @@ bun run ng serve --configuration production
 #### Con npm
 
 ```bash
-# Servidor de desarrollo (http://localhost:4200)
+# Servidor de desarrollo (http://localhost:4201)
 npm start
 # o
 ng serve
@@ -915,7 +915,7 @@ listCryptos(...): Observable<CryptoPage> {
 
 **Comando para auditoría:**
 ```bash
-npx lighthouse http://localhost:4200 --view
+npx lighthouse http://localhost:4201 --view
 ```
 
 ---
@@ -1084,7 +1084,7 @@ npm audit fix
 
 ```java
 @CrossOrigin(origins = {
-    "http://localhost:4200",      // Desarrollo
+    "http://localhost:4201",      // Desarrollo
     "https://cryptocollector.com"  // Producción
 })
 ```

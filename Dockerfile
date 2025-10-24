@@ -34,5 +34,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Exponer puerto 80
 EXPOSE 80
 
-# Comando para iniciar Nginx
+# Reset ENTRYPOINT y establecer CMD para nginx
+ENTRYPOINT []
 CMD ["nginx", "-g", "daemon off;"]
