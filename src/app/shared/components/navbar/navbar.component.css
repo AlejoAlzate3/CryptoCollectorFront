@@ -1,0 +1,173 @@
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+
+    .logo-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .app-title {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    margin-left: 32px;
+    gap: 8px;
+
+    a {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+.spacer {
+    flex: 1;
+}
+
+.user-menu {
+    .user-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px;
+        border-radius: 24px;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #ff9800;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .user-name {
+        font-size: 14px;
+        font-weight: 500;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        @media (max-width: 600px) {
+            display: none;
+        }
+    }
+}
+
+.user-menu-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .user-avatar-large {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #ff9800;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .user-info {
+        flex: 1;
+        min-width: 0;
+
+        .user-full-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    button {
+        mat-icon {
+            margin-right: 4px;
+        }
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 8px;
+    }
+
+    .navbar-brand .app-title {
+        font-size: 16px;
+    }
+
+    .navbar-nav {
+        margin-left: 16px;
+    }
+}

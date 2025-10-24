@@ -1,0 +1,18 @@
+import { baseEnvironment, BaseEnvironment } from './environment.base';
+
+interface Environment extends BaseEnvironment {
+    production: boolean;
+    apiUrl: string;
+}
+
+export const environment: Environment = {
+    ...baseEnvironment,
+    production: true,
+    apiUrl: 'http://localhost:8080',
+
+    // Configuración específica para Docker
+    features: {
+        ...baseEnvironment.features,
+        enableAnalytics: false
+    }
+};
