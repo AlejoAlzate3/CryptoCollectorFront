@@ -25,4 +25,4 @@ import { CommonModule } from '@angular/common';
     }
   `],
 })
-export class NotFoundComponent {}
+export class NotFoundComponent { }
