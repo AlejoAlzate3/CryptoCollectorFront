@@ -9,6 +9,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { RegisterRequest } from '../../core/models/auth.models';
 
 @Component({
   selector: 'app-signup',
@@ -20,18 +22,25 @@ import { Router } from '@angular/router';
 export class SignupComponent {
 
   readonly email = new FormControl('', [Validators.required, Validators.email]);
-  readonly password = new FormControl('', [Validators.required]);
+  readonly password = new FormControl('', [Validators.required, Validators.minLength(6)]);
   readonly name = new FormControl('', [Validators.required]);
   readonly lastName = new FormControl('', [Validators.required]);
   readonly passwordConfirm = new FormControl('', [Validators.required]);
 
   errorMessage = signal('');
+  registerError = signal('');
+  registerSuccess = signal('');
   hide = signal(true);
   hideConfirmPassword = signal(true);
+  isLoading = signal(false);
 
   readonly signupForm;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder, 
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.signupForm = this.fb.group({
       email: this.email,
       password: this.password,
@@ -103,12 +112,40 @@ export class SignupComponent {
 
   register(): void {
     if (this.signupForm.valid) {
-      const { email, password, name, lastName, passwordConfirm } = this.signupForm.value;
-      console.log('Signup data:', { email, password, name, lastName, passwordConfirm });
+      this.isLoading.set(true);
+      this.registerError.set('');
+      this.registerSuccess.set('');
 
-      this.router.navigate(['/dashboard/login']);
+      const registerRequest: RegisterRequest = {
+        firstName: this.name.value!,
+        lastName: this.lastName.value!,
+        email: this.email.value!,
+        password: this.password.value!
+      };
+
+      this.authService.register(registerRequest).subscribe({
+        next: (response) => {
+          console.log('Registro exitoso:', response);
+          this.isLoading.set(false);
+          this.registerSuccess.set('¡Registro exitoso! Redirigiendo al login...');
+          
+          // Redirigir al login después de 2 segundos
+          setTimeout(() => {
+            this.router.navigate(['/dashboard/login']);
+          }, 2000);
+        },
+        error: (error) => {
+          console.error('Error en registro:', error);
+          this.registerError.set(error.message || 'Error al registrarse');
+          this.isLoading.set(false);
+        }
+      });
     } else {
       this.signupForm.markAllAsTouched();
     }
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/dashboard/login']);
   }
 }

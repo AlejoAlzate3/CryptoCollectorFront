@@ -1,10 +1,25 @@
 <main>
     <div class="login-container">
         <h3 class="title-login">Registro de Usuario</h3>
+        
+        @if (registerError()) {
+            <div class="error-alert" role="alert">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ registerError() }}</span>
+            </div>
+        }
+
+        @if (registerSuccess()) {
+            <div class="success-alert" role="alert">
+                <mat-icon>check_circle_outline</mat-icon>
+                <span>{{ registerSuccess() }}</span>
+            </div>
+        }
+
         <form [formGroup]="signupForm" (ngSubmit)="register()">
             <mat-form-field appearance="outline" class="full-width spaces-fields">
                 <mat-label>Nombre</mat-label>
-                <input matInput type="text" placeholder="Juan Pérez" formControlName="name"
+                <input matInput type="text" placeholder="Juan" formControlName="name"
                     (blur)="updateErrorMessage()" required />
                 @if (name.invalid && (name.dirty || name.touched)) {
                 <mat-error>El nombre es obligatorio</mat-error>
@@ -37,7 +52,12 @@
                     <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
                 @if (password.invalid && (password.dirty || password.touched)) {
-                <mat-error>La contraseña es obligatoria</mat-error>
+                    @if (password.hasError('required')) {
+                        <mat-error>La contraseña es obligatoria</mat-error>
+                    }
+                    @if (password.hasError('minlength')) {
+                        <mat-error>La contraseña debe tener al menos 6 caracteres</mat-error>
+                    }
                 }
             </mat-form-field>
 
@@ -49,13 +69,20 @@
                     [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmPassword()">
                     <mat-icon>{{hideConfirmPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
-                <mat-error
-                    *ngIf="passwordConfirm.hasError('passwordMismatch') && (passwordConfirm.dirty || passwordConfirm.touched)">
-                    Las contraseñas no coinciden
-                </mat-error>
+                @if (passwordConfirm.hasError('passwordMismatch') && (passwordConfirm.dirty || passwordConfirm.touched)) {
+                    <mat-error>Las contraseñas no coinciden</mat-error>
+                }
             </mat-form-field>
 
-            <button mat-raised-button type="submit" class="btn-register" [disabled]="signupForm.invalid">Registrarse</button>
+            <button mat-raised-button type="submit" class="btn-register" 
+                    [disabled]="signupForm.invalid || isLoading()">
+                {{ isLoading() ? 'Registrando...' : 'Registrarse' }}
+            </button>
+
+            <button mat-button type="button" class="btn-login-link" (click)="goToLogin()" 
+                    [disabled]="isLoading()">
+                ¿Ya tienes cuenta? Inicia sesión
+            </button>
         </form>
     </div>
 </main>
